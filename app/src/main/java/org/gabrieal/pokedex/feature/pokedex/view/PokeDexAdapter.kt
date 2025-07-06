@@ -2,76 +2,87 @@ package org.gabrieal.pokedex.feature.pokedex.view
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.gabrieal.pokedex.R
 import org.gabrieal.pokedex.data.model.NamedResource
+import org.gabrieal.pokedex.databinding.PokedexItemBinding
+import org.gabrieal.pokedex.helpers.enums.Filter
 import org.gabrieal.pokedex.helpers.util.toSentenceCase
 
 class PokeDexAdapter(
-    private var pokemonList: List<NamedResource>? = null,
     private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PokeDexAdapter.PokeDexViewHolder>() {
 
-    private var selectedPosition: Int = -1
+    private var fullList: List<NamedResource> = emptyList()
+    private var filteredList: List<NamedResource> = emptyList()
+    private var caughtList: MutableSet<NamedResource> = mutableSetOf()
+    private var selectedPokemon: NamedResource? = null
 
-    fun setPokemonList(pokemonList: List<NamedResource>?) {
-        this.pokemonList = pokemonList
+    fun setPokemonList(list: List<NamedResource>) {
+        fullList = list
+        filteredList = list
         notifyDataSetChanged()
     }
 
-    fun setSelectedPosition(position: Int) {
-        val prevPosition = selectedPosition
-        selectedPosition = position
-
-        notifyItemChanged(prevPosition)
-        notifyItemChanged(position)
+    fun setSelected(pokemon: NamedResource) {
+        val previous = filteredList.indexOf(selectedPokemon)
+        val current = filteredList.indexOf(pokemon)
+        selectedPokemon = pokemon
+        notifyItemChanged(previous)
+        notifyItemChanged(current)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): PokeDexViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.pokedex_item, parent, false
-        )
+    fun setFilter(filter: Filter) {
+        filteredList = when (filter) {
+            Filter.ALL -> fullList
+            Filter.CAUGHT -> fullList.filter { it in caughtList }
+            Filter.MISSING -> fullList.filter { it !in caughtList }
+        }
+        notifyDataSetChanged()
+    }
 
-        return PokeDexViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokeDexViewHolder {
+        val binding = PokedexItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PokeDexViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PokeDexViewHolder, position: Int) {
-        val pokemon = pokemonList?.get(position)
-        holder.tvPokemonName.text = pokemon?.name?.toSentenceCase()
+        val pokemon = filteredList[position]
 
-        holder.itemView.setBackgroundColor(Color.TRANSPARENT)
+        with(holder.binding) {
+            tvPokemonName.text = pokemon.name?.toSentenceCase()
 
-        if (selectedPosition == position) {
-            holder.itemView.setBackgroundColor(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    R.color.pokedex_selected_blue
-                )
+            root.setBackgroundColor(
+                if (pokemon == selectedPokemon)
+                    ContextCompat.getColor(root.context, R.color.pokedex_selected_blue)
+                else Color.TRANSPARENT
             )
-        }
 
-        holder.itemView.setOnClickListener {
-            pokemon?.name?.let { name ->
-                setSelectedPosition(position)
-                onItemClickListener.onPokemonClick(name)
+            ivPokemonCaught.setImageResource(
+                if (pokemon in caughtList) R.drawable.pokeball else R.drawable.pokeball_not
+            )
+
+            ivPokemonCaught.setOnClickListener {
+                toggleCaughtStatus(pokemon, position)
+            }
+
+            root.setOnClickListener {
+                setSelected(pokemon)
+                pokemon.name?.let { name -> onItemClickListener.onPokemonClick(name) }
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        return pokemonList?.size ?: 0
+    override fun getItemCount(): Int = filteredList.size
+
+    private fun toggleCaughtStatus(pokemon: NamedResource, position: Int) {
+        if (!caughtList.add(pokemon)) caughtList.remove(pokemon)
+        notifyItemChanged(position)
     }
 
-    inner class PokeDexViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvPokemonName: TextView = itemView.findViewById(R.id.tv_pokemon_name)
-    }
+    inner class PokeDexViewHolder(val binding: PokedexItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     interface OnItemClickListener {
         fun onPokemonClick(name: String)

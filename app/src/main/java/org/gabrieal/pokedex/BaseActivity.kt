@@ -1,5 +1,6 @@
 package org.gabrieal.pokedex
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -18,14 +19,13 @@ open class BaseActivity : AppCompatActivity() {
         observeResponses()
     }
 
-    protected fun setupInsets(view: View?) {
-        view?.let {
-            ViewCompat.setOnApplyWindowInsetsListener(it) { v, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-                insets
-            }
+    fun getSystemBarHeights(view: View, onInsetsAvailable: (statusBarHeight: Int, navigationBarHeight: Int) -> Unit) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val statusBarHeight = systemBars.top
+            val navigationBarHeight = systemBars.bottom
+            onInsetsAvailable(statusBarHeight, navigationBarHeight)
+            insets // return the insets so they're still applied
         }
     }
 

@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/tv_pokemon_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/pokemon_font"
-        android:includeFontPadding="false"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        tools:text="Bulbasaur" />
+        android:orientation="horizontal"
+        android:padding="4dp">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/iv_pokemon_caught"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pokeball_not" />
+
+        <TextView
+            android:id="@+id/tv_pokemon_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/pokemon_font"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:text="Bulbasaur" />
+
+    </LinearLayout>
+
+</layout>

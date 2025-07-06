@@ -55,11 +55,10 @@ class PokeDexViewModel(private val pokeDexRepo: PokeDexRepo) : ViewModel() {
                         ?.replace("\n", " ")
 
                     pokemonDetail.description = cleanedText
-                    Log.d("PokeViewModel", "Pokemon description: ${pokemonDetail.description}")
                     _pokemonDetailState.value = pokemonDetail
                 }
             } catch (e: Exception) {
-                Log.e("PokeViewModel", "Failed to fetch pokemon", e)
+                Log.e("PokeViewModel", "Failed to fetch description", e)
             }
         }
     }

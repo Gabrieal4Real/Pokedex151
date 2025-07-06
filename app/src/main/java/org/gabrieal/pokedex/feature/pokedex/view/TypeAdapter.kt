@@ -1,53 +1,43 @@
 package org.gabrieal.pokedex.feature.pokedex.view
 
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.gabrieal.pokedex.R
-import org.gabrieal.pokedex.data.model.NamedResource
 import org.gabrieal.pokedex.data.model.TypeSlot
+import org.gabrieal.pokedex.databinding.PokemonTypeItemBinding
 import org.gabrieal.pokedex.helpers.enums.PokemonType
-import org.gabrieal.pokedex.helpers.util.toSentenceCase
 
 class TypeAdapter(
-    private var pokemonType: List<TypeSlot>?,
-) : RecyclerView.Adapter<TypeAdapter.PokeDexViewHolder>() {
+    private var typeList: List<TypeSlot>? = null
+) : RecyclerView.Adapter<TypeAdapter.TypeViewHolder>() {
 
-
-    fun setPokemonType(pokemonType: List<TypeSlot>?) {
-        this.pokemonType = pokemonType
+    fun setPokemonType(types: List<TypeSlot>?) {
+        typeList = types
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): PokeDexViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.pokemon_type_item, parent, false
-        )
-
-        return PokeDexViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypeViewHolder {
+        val binding = PokemonTypeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TypeViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PokeDexViewHolder, position: Int) {
-        val pokemonType = pokemonType?.get(position)
-        holder.cvPokemonType.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, PokemonType.fromName(pokemonType?.type?.name ?: "")?.color ?: R.color.black))
-        holder.tvPokemonType.text = pokemonType?.type?.name?.uppercase()
+    override fun onBindViewHolder(holder: TypeViewHolder, position: Int) {
+        val typeSlot = typeList?.getOrNull(position) ?: return
+        val context = holder.itemView.context
+
+        val typeName = typeSlot.type?.name.orEmpty()
+        val colorRes = PokemonType.fromName(typeName)?.color ?: R.color.black
+
+        with(holder.binding) {
+            tvPokemonType.text = typeName.uppercase()
+            cvPokemonType.setCardBackgroundColor(ContextCompat.getColor(context, colorRes))
+        }
     }
 
-    override fun getItemCount(): Int {
-        return pokemonType?.size ?: 0
-    }
+    override fun getItemCount(): Int = typeList?.size ?: 0
 
-    inner class PokeDexViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val cvPokemonType: CardView = itemView.findViewById(R.id.cv_pokemon_type)
-        val tvPokemonType: TextView = itemView.findViewById(R.id.tv_pokemon_type)
-    }
+    inner class TypeViewHolder(val binding: PokemonTypeItemBinding) :
+        RecyclerView.ViewHolder(binding.root)
 }
