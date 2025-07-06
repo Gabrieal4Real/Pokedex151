@@ -120,6 +120,7 @@ class PokeDexActivity : BaseActivity() {
         typeAdapter.setPokemonType(detail.types)
         tvPokedexName.text = detail.name?.toSentenceCase()
         tvPokedexDescription.text = detail.description
+        tvPokedexAbilities.text = detail.abilities?.joinToString(separator = "\n") { "• ${it.ability?.name?.toSentenceCase()}" }
 
         loadPokemonSprite(detail.sprites?.frontDefault)
     }

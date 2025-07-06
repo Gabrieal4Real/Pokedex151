@@ -27,7 +27,7 @@
                 android:layout_marginVertical="24dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_pokedex_screen"
-                android:padding="24dp">
+                android:padding="20dp">
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/lottie_animation"
@@ -49,7 +49,7 @@
 
                     <ImageView
                         android:id="@+id/iv_pokedex"
-                        android:layout_width="200dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/tv_pokedex_name"
                         android:layout_alignParentStart="true"
@@ -60,10 +60,39 @@
                         android:id="@+id/rv_pokedex_types"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_above="@+id/tv_pokedex_title_abilities"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_toEndOf="@+id/iv_pokedex"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/pokemon_type_item" />
+
+                    <TextView
+                        android:id="@+id/tv_pokedex_title_abilities"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/tv_pokedex_abilities"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_toEndOf="@+id/iv_pokedex"
+                        android:fontFamily="@font/pokemon_font"
+                        android:text="@string/abilities"
+                        android:textColor="@color/black"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_pokedex_abilities"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_above="@+id/tv_pokedex_name"
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@+id/iv_pokedex" />
+                        android:layout_toEndOf="@+id/iv_pokedex"
+                        android:fontFamily="@font/pokemon_font"
+                        android:textColor="@color/black"
+                        android:textSize="8sp"
+                        tools:text="@string/placeholder" />
 
                     <TextView
                         android:id="@+id/tv_pokedex_name"
@@ -75,7 +104,7 @@
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="Bulbasaur" />
+                        tools:text="@string/placeholder" />
 
                     <TextView
                         android:id="@+id/tv_pokedex_description"
@@ -87,7 +116,8 @@
                         android:lineSpacingMultiplier="1.2"
                         android:lines="6"
                         android:textColor="@color/black"
-                        android:textSize="11sp" />
+                        android:textSize="11sp"
+                        tools:text="@string/placeholder" />
 
                 </RelativeLayout>
             </RelativeLayout>
