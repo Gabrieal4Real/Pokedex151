@@ -1,4 +1,4 @@
-package org.gabrieal.pokedex.util
+package org.gabrieal.pokedex.helpers.util
 
 
 fun String.toSentenceCase(): String { // capitalize the first word

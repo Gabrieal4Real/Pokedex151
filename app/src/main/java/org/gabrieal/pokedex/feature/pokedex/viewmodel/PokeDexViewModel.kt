@@ -34,7 +34,29 @@ class PokeDexViewModel(private val pokeDexRepo: PokeDexRepo) : ViewModel() {
         viewModelScope.launch {
             try {
                 pokeDexRepo.getPokemonByName(name).collect {
-                    _pokemonDetailState.value = it
+                    getPokemonDescription(name, it)
+                }
+            } catch (e: Exception) {
+                Log.e("PokeViewModel", "Failed to fetch pokemon", e)
+            }
+        }
+    }
+
+    fun getPokemonDescription(name: String, pokemonDetail: PokemonDetail) {
+        viewModelScope.launch {
+            try {
+                pokeDexRepo.getPokemonDescription(name).collect { it ->
+                    val cleanedText = it.flavorTextEntries?.first { it.language.name == "en" }?.flavorText
+                        ?.replace("\u000C", "")
+                        ?.replace("\u00AD\n", "")
+                        ?.replace("\u00AD", "")
+                        ?.replace(" -\n", " - ")
+                        ?.replace("-\n", "-")
+                        ?.replace("\n", " ")
+
+                    pokemonDetail.description = cleanedText
+                    Log.d("PokeViewModel", "Pokemon description: ${pokemonDetail.description}")
+                    _pokemonDetailState.value = pokemonDetail
                 }
             } catch (e: Exception) {
                 Log.e("PokeViewModel", "Failed to fetch pokemon", e)

@@ -9,9 +9,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.gabrieal.pokedex.R
 import org.gabrieal.pokedex.data.model.NamedResource
-import org.gabrieal.pokedex.util.toSentenceCase
+import org.gabrieal.pokedex.helpers.util.toSentenceCase
 
-class PokeDexAdapter(private var pokemonList: List<NamedResource>? = null, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<PokeDexAdapter.PokeDexViewHolder>() {
+class PokeDexAdapter(
+    private var pokemonList: List<NamedResource>? = null,
+    private val onItemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<PokeDexAdapter.PokeDexViewHolder>() {
 
     private var selectedPosition: Int = -1
 
@@ -46,7 +49,12 @@ class PokeDexAdapter(private var pokemonList: List<NamedResource>? = null, priva
         holder.itemView.setBackgroundColor(Color.TRANSPARENT)
 
         if (selectedPosition == position) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.pokedex_selected_blue))
+            holder.itemView.setBackgroundColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.pokedex_selected_blue
+                )
+            )
         }
 
         holder.itemView.setOnClickListener {

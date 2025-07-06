@@ -14,6 +14,7 @@ import org.gabrieal.pokedex.R
 import org.gabrieal.pokedex.data.model.PokemonDetail
 import org.gabrieal.pokedex.databinding.ActivityPokedexBinding
 import org.gabrieal.pokedex.feature.pokedex.viewmodel.PokeDexViewModel
+import org.gabrieal.pokedex.helpers.util.toSentenceCase
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokeDexActivity : BaseActivity() {
@@ -25,10 +26,12 @@ class PokeDexActivity : BaseActivity() {
     private var pokeDexAdapter = PokeDexAdapter(null, object : PokeDexAdapter.OnItemClickListener {
         override fun onPokemonClick(name: String) {
             binding?.lottieAnimation?.visibility = View.VISIBLE
-            binding?.ivPokedex?.visibility = View.GONE
+            binding?.llPokedex?.visibility = View.GONE
             viewModel.getPokemonByName(name)
         }
     })
+
+    private var typeAdapter = TypeAdapter(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +66,14 @@ class PokeDexActivity : BaseActivity() {
     private fun setupRecyclerView() {
         binding?.rvPokedex?.layoutManager = LinearLayoutManager(this)
         binding?.rvPokedex?.adapter = pokeDexAdapter
+
+        binding?.rvPokedexTypes?.layoutManager = LinearLayoutManager(this)
+        binding?.rvPokedexTypes?.adapter = typeAdapter
     }
 
     override fun setupViewModel() {
         binding?.lottieAnimation?.visibility = View.VISIBLE
-        binding?.ivPokedex?.visibility = View.GONE
+        binding?.llPokedex?.visibility = View.GONE
         viewModel.loadPokemonList()
     }
 
@@ -84,9 +90,14 @@ class PokeDexActivity : BaseActivity() {
                     viewModel.pokemonDetailState.collect { pokemonDetail ->
                         pokemonDetail?.let {
                             binding?.lottieAnimation?.visibility = View.GONE
-                            binding?.ivPokedex?.visibility = View.VISIBLE
+                            binding?.llPokedex?.visibility = View.VISIBLE
+                            binding?.llBottomButtons?.visibility = View.VISIBLE
 
                             selectedPokemon = pokemonDetail
+
+                            typeAdapter.setPokemonType(selectedPokemon?.types)
+                            binding?.tvPokedexName?.text = pokemonDetail.name?.toSentenceCase()
+                            binding?.tvPokedexDescription?.text = pokemonDetail.description
                             loadPokemonSprite(pokemonDetail.sprites?.frontDefault)
                         }
                     }

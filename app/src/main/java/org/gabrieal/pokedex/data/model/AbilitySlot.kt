@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AbilitySlot(
     val ability: NamedResource? = null,
-    @SerialName("is_hidden") val isHidden: Boolean? = null,
+    @SerialName("is_hidden")
+    val isHidden: Boolean? = null,
     val slot: Int? = null
 )
