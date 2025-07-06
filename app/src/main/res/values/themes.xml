@@ -1,7 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme with no action bar -->
     <style name="Base.Theme.Pokedex151" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="Theme.Pokedex151" parent="Base.Theme.Pokedex151" />
