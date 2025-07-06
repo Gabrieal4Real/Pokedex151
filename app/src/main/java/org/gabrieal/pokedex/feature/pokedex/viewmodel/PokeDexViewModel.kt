@@ -21,7 +21,7 @@ class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
         runCatching {
             repo.getPokemons().collect { _pokemonState.value = it }
         }.onFailure {
-            Log.e("PokeDexVM", "Error loading Pokémon list", it)
+
         }
     }
 
@@ -31,7 +31,7 @@ class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
                 fetchAndAttachDescription(name, detail)
             }
         }.onFailure {
-            Log.e("PokeDexVM", "Error loading Pokémon detail: $name", it)
+
         }
     }
 
@@ -46,7 +46,7 @@ class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
                 _pokemonDetailState.value = detail
             }
         }.onFailure {
-            Log.e("PokeDexVM", "Error fetching description for $name", it)
+
         }
     }
 

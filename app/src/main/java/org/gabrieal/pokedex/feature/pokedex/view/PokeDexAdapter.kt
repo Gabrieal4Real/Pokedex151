@@ -69,8 +69,14 @@ class PokeDexAdapter(
             }
 
             root.setOnClickListener {
+                if (pokemon == selectedPokemon) return@setOnClickListener
                 setSelected(pokemon)
                 pokemon.name?.let { name -> onItemClickListener.onPokemonClick(name) }
+            }
+
+            root.setOnLongClickListener {
+                toggleCaughtStatus(pokemon, position)
+                return@setOnLongClickListener true
             }
         }
     }

@@ -85,9 +85,9 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/pokemon_font"
                         android:lineSpacingMultiplier="1.2"
-                        android:lines="5"
+                        android:lines="6"
                         android:textColor="@color/black"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </RelativeLayout>
             </RelativeLayout>
