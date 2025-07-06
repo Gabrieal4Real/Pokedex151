@@ -12,7 +12,6 @@ val appModule = module {
     single { httpClient }
     single { APIService(get()) }
 
-
     // Repo
     single <PokeDexRepo>{ PokeDexRepoImpl(get()) }
 
