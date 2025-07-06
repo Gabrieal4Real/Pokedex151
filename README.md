@@ -20,6 +20,7 @@ A modern, native Android Pokédex app built with Kotlin, Views, Ktor and Koin. B
 
 - **Dependency Injection:** All screens use Koin for dependency injection, ensuring ViewModels are managed by the DI container for maintainability and testability.
 - **Architecture:** The app follows a **MVVM** architecture, with a clean separation of concerns, making it easy to understand and maintain.
+- **Testing:** The app features simple unit tests for ViewModels using MockK, ensuring a high level of quality and reliability.
 
 ## Getting Started
 
@@ -52,6 +53,7 @@ A modern, native Android Pokédex app built with Kotlin, Views, Ktor and Koin. B
 - [Kotlinx Coroutines](https://github.com/Kotlin/kotlinx.coroutines)  
 - [StateFlow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-state-flow/)  
 - [Ktor (networking)](https://ktor.io/)  
+- [MocKK (testing)](https://mockk.io/)
 
 ## Platform Support
 
