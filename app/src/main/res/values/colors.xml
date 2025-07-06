@@ -4,5 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="pokedex_red">#FFE76864</color>
     <color name="pokedex_blue">#FFC4F0F5</color>
+    <color name="pokedex_selected_blue">#FFB0DCE1</color>
     <color name="pokedex_grey">#FFDCDEDB</color>
 </resources>
