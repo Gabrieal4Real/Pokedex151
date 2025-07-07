@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
 import org.gabrieal.pokedex.data.model.*
 import org.gabrieal.pokedex.feature.pokedex.repo.PokeDexRepo
-import org.intellij.lang.annotations.Language
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before

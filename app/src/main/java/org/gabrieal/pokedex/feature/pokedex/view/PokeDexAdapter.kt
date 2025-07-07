@@ -2,6 +2,7 @@ package org.gabrieal.pokedex.feature.pokedex.view
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -54,11 +55,13 @@ class PokeDexAdapter(
         with(holder.binding) {
             tvPokemonName.text = pokemon.name?.toSentenceCase()
 
-            root.setBackgroundColor(
-                if (pokemon == selectedPokemon)
-                    ContextCompat.getColor(root.context, R.color.pokedex_selected_blue)
-                else Color.TRANSPARENT
-            )
+            root.setBackgroundColor(Color.TRANSPARENT)
+            ivSelectedArrow.visibility = View.GONE
+
+            if(pokemon == selectedPokemon) {
+                root.setBackgroundColor(ContextCompat.getColor(root.context, R.color.pokedex_selected_blue))
+                ivSelectedArrow.visibility = View.VISIBLE
+            }
 
             ivPokemonCaught.setImageResource(
                 if (pokemon in caughtList) R.drawable.pokeball else R.drawable.pokeball_not

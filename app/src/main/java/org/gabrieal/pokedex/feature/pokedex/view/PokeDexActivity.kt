@@ -1,5 +1,6 @@
 package org.gabrieal.pokedex.feature.pokedex.view
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -24,10 +25,13 @@ class PokeDexActivity : BaseActivity() {
 
     private var selectedPokemon: PokemonDetail? = null
 
+    val mp: MediaPlayer by lazy { MediaPlayer.create(this, R.raw.click_sound) }
+
     private val pokeDexAdapter = PokeDexAdapter(object : PokeDexAdapter.OnItemClickListener {
         override fun onPokemonClick(name: String) {
             binding.lottieAnimation.visibility = View.VISIBLE
             binding.llPokedex.visibility = View.GONE
+            playSound()
             viewModel.getPokemonByName(name)
         }
     })
@@ -78,10 +82,12 @@ class PokeDexActivity : BaseActivity() {
 
     private fun setupSpriteButtons() = with(binding) {
         btnNormal.setOnClickListener {
+            playSound()
             loadPokemonSprite(selectedPokemon?.sprites?.frontDefault)
         }
 
         btnShiny.setOnClickListener {
+            playSound()
             loadPokemonSprite(selectedPokemon?.sprites?.frontShiny)
         }
     }
@@ -127,5 +133,16 @@ class PokeDexActivity : BaseActivity() {
 
     private fun loadPokemonSprite(url: String?) {
         Glide.with(this).load(url).into(binding.ivPokedex)
+    }
+
+    private fun playSound() {
+        mp.setVolume(0.05f, 0.05f)
+        mp.seekTo(0)
+        mp.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mp.release()
     }
 }

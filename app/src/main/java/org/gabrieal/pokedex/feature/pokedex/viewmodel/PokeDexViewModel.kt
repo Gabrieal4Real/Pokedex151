@@ -1,9 +1,9 @@
 package org.gabrieal.pokedex.feature.pokedex.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.gabrieal.pokedex.data.model.PokemonDetail
 import org.gabrieal.pokedex.data.model.PokemonList
@@ -35,20 +35,21 @@ class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
         }
     }
 
-    private fun fetchAndAttachDescription(name: String, detail: PokemonDetail) = viewModelScope.launch {
-        runCatching {
-            repo.getPokemonDescription(name).collect { species ->
-                val rawText = species.flavorTextEntries
-                    ?.firstOrNull { it.language.name == "en" }
-                    ?.flavorText.orEmpty()
+    private fun fetchAndAttachDescription(name: String, detail: PokemonDetail) =
+        viewModelScope.launch {
+            runCatching {
+                repo.getPokemonDescription(name).collect { species ->
+                    val rawText = species.flavorTextEntries
+                        ?.firstOrNull { it.language.name == "en" }
+                        ?.flavorText.orEmpty()
 
-                detail.description = cleanDescription(rawText)
-                _pokemonDetailState.value = detail
+                    detail.description = cleanDescription(rawText)
+                    _pokemonDetailState.value = detail
+                }
+            }.onFailure {
+
             }
-        }.onFailure {
-
         }
-    }
 
     private fun cleanDescription(text: String): String {
         return text
