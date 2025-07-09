@@ -65,9 +65,10 @@ class PokeDexAdapter(
 
             ivPokemonCaught.rotation = 0f
 
+
             if (pokemon == selectedPokemon) {
                 shakeAnimatorSet?.cancel()
-                startShaking(ivPokemonCaught)
+                if (pokemon !in caughtList) startShaking(ivPokemonCaught)
 
                 root.setBackgroundColor(
                     ContextCompat.getColor(
@@ -83,7 +84,8 @@ class PokeDexAdapter(
             )
 
             ivPokemonCaught.setOnClickListener {
-                toggleCaughtStatus(pokemon, position)
+                root.performClick()
+                onItemClickListener.catchingPokemon(pokemon, position)
             }
 
             root.setOnClickListener {
@@ -121,8 +123,10 @@ class PokeDexAdapter(
 
     override fun getItemCount(): Int = filteredList.size
 
-    private fun toggleCaughtStatus(pokemon: NamedResource, position: Int) {
-        if (!caughtList.add(pokemon)) caughtList.remove(pokemon)
+    fun toggleCaughtStatus(pokemon: NamedResource, position: Int) {
+        if (!caughtList.contains(pokemon)) {
+            caughtList.add(pokemon)
+        }
         notifyItemChanged(position)
     }
 
@@ -131,5 +135,7 @@ class PokeDexAdapter(
 
     interface OnItemClickListener {
         fun onPokemonClick(name: String)
+
+        fun catchingPokemon(name: NamedResource, position: Int)
     }
 }

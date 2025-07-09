@@ -4,4 +4,6 @@
     <string name="shiny">Shiny</string>
     <string name="placeholder">Bulbasaur</string>
     <string name="abilities">Abilities:</string>
+    <string name="you_ve_caught_a_pokemon">You\'ve caught a POKEMON!</string>
+    <string name="proceed">Proceed</string>
 </resources>
