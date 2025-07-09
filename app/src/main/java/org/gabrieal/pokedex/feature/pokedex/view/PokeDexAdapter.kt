@@ -12,41 +12,33 @@ import androidx.recyclerview.widget.RecyclerView
 import org.gabrieal.pokedex.R
 import org.gabrieal.pokedex.data.model.NamedResource
 import org.gabrieal.pokedex.databinding.PokedexItemBinding
-import org.gabrieal.pokedex.helpers.enums.Filter
 import org.gabrieal.pokedex.helpers.util.toSentenceCase
 
 class PokeDexAdapter(
     private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PokeDexAdapter.PokeDexViewHolder>() {
 
-    private var fullList: List<NamedResource> = emptyList()
-    private var filteredList: List<NamedResource> = emptyList()
-    private var caughtList: MutableSet<NamedResource> = mutableSetOf()
+    private var pokemonList: List<NamedResource> = emptyList()
+    private var caughtList: Set<NamedResource> = emptySet()
     private var selectedPokemon: NamedResource? = null
-
     private var shakeAnimatorSet: AnimatorSet? = null
 
     fun setPokemonList(list: List<NamedResource>) {
-        fullList = list
-        filteredList = list
+        pokemonList = list
+        notifyDataSetChanged()
+    }
+
+    fun setCaughtList(list: Set<NamedResource>) {
+        caughtList = list
         notifyDataSetChanged()
     }
 
     fun setSelected(pokemon: NamedResource) {
-        val previous = filteredList.indexOf(selectedPokemon)
-        val current = filteredList.indexOf(pokemon)
+        val previous = pokemonList.indexOf(selectedPokemon)
+        val current = pokemonList.indexOf(pokemon)
         selectedPokemon = pokemon
         notifyItemChanged(previous)
         notifyItemChanged(current)
-    }
-
-    fun setFilter(filter: Filter) {
-        filteredList = when (filter) {
-            Filter.ALL -> fullList
-            Filter.CAUGHT -> fullList.filter { it in caughtList }
-            Filter.MISSING -> fullList.filter { it !in caughtList }
-        }
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokeDexViewHolder {
@@ -55,16 +47,14 @@ class PokeDexAdapter(
     }
 
     override fun onBindViewHolder(holder: PokeDexViewHolder, position: Int) {
-        val pokemon = filteredList[position]
+        val pokemon = pokemonList[position]
 
         with(holder.binding) {
             tvPokemonName.text = pokemon.name?.toSentenceCase()
 
             root.setBackgroundColor(Color.TRANSPARENT)
             ivSelectedArrow.visibility = View.GONE
-
             ivPokemonCaught.rotation = 0f
-
 
             if (pokemon == selectedPokemon) {
                 shakeAnimatorSet?.cancel()
@@ -84,8 +74,11 @@ class PokeDexAdapter(
             )
 
             ivPokemonCaught.setOnClickListener {
-                root.performClick()
-                onItemClickListener.catchingPokemon(pokemon, position)
+                if (pokemon != selectedPokemon) {
+                    root.performClick()
+                    return@setOnClickListener
+                }
+                onItemClickListener.catchingPokemon(pokemon)
             }
 
             root.setOnClickListener {
@@ -95,11 +88,13 @@ class PokeDexAdapter(
             }
 
             root.setOnLongClickListener {
-                toggleCaughtStatus(pokemon, position)
+                onItemClickListener.catchingPokemon(pokemon)
                 return@setOnLongClickListener true
             }
         }
     }
+
+    override fun getItemCount(): Int = pokemonList.size
 
     private fun startShaking(ivPokemonCaught: ImageView) {
         val rotation = ObjectAnimator.ofFloat(ivPokemonCaught, "rotation", -15f, 15f).apply {
@@ -121,21 +116,11 @@ class PokeDexAdapter(
         }
     }
 
-    override fun getItemCount(): Int = filteredList.size
-
-    fun toggleCaughtStatus(pokemon: NamedResource, position: Int) {
-        if (!caughtList.contains(pokemon)) {
-            caughtList.add(pokemon)
-        }
-        notifyItemChanged(position)
-    }
-
     inner class PokeDexViewHolder(val binding: PokedexItemBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     interface OnItemClickListener {
         fun onPokemonClick(name: String)
-
-        fun catchingPokemon(name: NamedResource, position: Int)
+        fun catchingPokemon(name: NamedResource)
     }
 }

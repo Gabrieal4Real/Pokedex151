@@ -35,21 +35,24 @@ class PokeDexActivity : BaseActivity() {
     private var lastX = 0f
     private var lastY = 0f
 
-    private val clickSoundMP: MediaPlayer by lazy { MusicPlayerUtil.create(this, R.raw.click_sound) }
-    private val successSoundMP: MediaPlayer by lazy { MusicPlayerUtil.create(this, R.raw.pokeball_success) }
-    private var pokemonDetails: Pair<NamedResource, Int>? = null
+    private val clickSoundMP: MediaPlayer by lazy {
+        MusicPlayerUtil.create(this, R.raw.click_sound)
+    }
+    private val successSoundMP: MediaPlayer by lazy {
+        MusicPlayerUtil.create(this, R.raw.pokeball_success)
+    }
 
     private val pokeDexAdapter = PokeDexAdapter(object : PokeDexAdapter.OnItemClickListener {
         override fun onPokemonClick(name: String) {
-            playSound(clickSoundMP)
-            viewModel.getPokemonByName(name)
             binding.lottieAnimation.visibility = View.VISIBLE
             binding.llPokedex.visibility = View.GONE
+
+            playSound(clickSoundMP)
+            viewModel.getPokemonByName(name)
         }
 
-        override fun catchingPokemon(name: NamedResource, position: Int) {
-            pokemonDetails = name to position
-            viewModel.setCatchMode(true)
+        override fun catchingPokemon(name: NamedResource) {
+            viewModel.setCatchingPokemon(name)
         }
     })
 
@@ -72,9 +75,9 @@ class PokeDexActivity : BaseActivity() {
         btnCaughtPokedex.tvButtonText.text = Filter.CAUGHT.displayName
         btnMissingPokedex.tvButtonText.text = Filter.MISSING.displayName
 
-        btnAllPokedex.root.setOnClickListener { pokeDexAdapter.setFilter(Filter.ALL) }
-        btnCaughtPokedex.root.setOnClickListener { pokeDexAdapter.setFilter(Filter.CAUGHT) }
-        btnMissingPokedex.root.setOnClickListener { pokeDexAdapter.setFilter(Filter.MISSING) }
+        btnAllPokedex.root.setOnClickListener { viewModel.setFilter(Filter.ALL) }
+        btnCaughtPokedex.root.setOnClickListener { viewModel.setFilter(Filter.CAUGHT) }
+        btnMissingPokedex.root.setOnClickListener { viewModel.setFilter(Filter.MISSING) }
 
         btnNormal.setOnClickListener {
             playSound(clickSoundMP)
@@ -87,8 +90,9 @@ class PokeDexActivity : BaseActivity() {
         }
 
         btnPokeballThrow.setOnClickListener {
-            viewModel.setCatchMode(false)
-            pokemonDetails?.let { pokeDexAdapter.toggleCaughtStatus(it.first, it.second) }
+            viewModel.uiState.value.catchingPokemon?.let { pokemon ->
+                viewModel.toggleCaughtStatus(pokemon)
+            }
         }
 
         flPokeballThrow.setOnTouchListener { _, event -> handleTouch(event) }
@@ -109,33 +113,36 @@ class PokeDexActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    state.pokemonList?.results?.let(pokeDexAdapter::setPokemonList)
                     state.pokemonDetail?.let(::showPokemonDetail)
+                    state.filteredList.let(pokeDexAdapter::setPokemonList)
+                    state.caughtList.let(pokeDexAdapter::setCaughtList)
                     toggleCatchModeVisibility(state.isCatchMode, state.pokemonDetail)
                 }
             }
         }
     }
 
-    private fun toggleCatchModeVisibility(isCatchMode: Boolean, detail: PokemonDetail?) = with(binding) {
-        ivPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
-        flPokemonCatch.visibility = if (isCatchMode) View.VISIBLE else View.GONE
-        flPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
-        rvPokedex.visibility = if(!isCatchMode) View.VISIBLE else View.GONE
+    private fun toggleCatchModeVisibility(isCatchMode: Boolean, detail: PokemonDetail?) =
+        with(binding) {
+            ivPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
+            flPokemonCatch.visibility = if (isCatchMode) View.VISIBLE else View.GONE
+            flPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
+            rvPokedex.visibility = if (!isCatchMode) View.VISIBLE else View.GONE
 
-        if (isCatchMode) {
-            Toast.makeText(this@PokeDexActivity, "GET READY TO CATCH!", Toast.LENGTH_SHORT).show()
-            lottieAnimation.visibility = View.GONE
-            llPokedex.visibility = View.GONE
-            llBottomButtons.visibility = View.GONE
-        } else {
-            tvPokeballThrow.visibility = View.GONE
-            btnPokeballThrow.visibility = View.GONE
-            llPokedex.visibility = if (detail == null) View.GONE else View.VISIBLE
-            llBottomButtons.visibility = if (detail == null) View.GONE else View.VISIBLE
-            lottieAnimation.visibility = if (detail == null) View.VISIBLE else View.GONE
+            if (isCatchMode) {
+                Toast.makeText(this@PokeDexActivity, "GET READY TO CATCH!", Toast.LENGTH_SHORT)
+                    .show()
+                lottieAnimation.visibility = View.GONE
+                llPokedex.visibility = View.GONE
+                llBottomButtons.visibility = View.GONE
+            } else {
+                tvPokeballThrow.visibility = View.GONE
+                btnPokeballThrow.visibility = View.GONE
+                llPokedex.visibility = if (detail == null) View.GONE else View.VISIBLE
+                llBottomButtons.visibility = if (detail == null) View.GONE else View.VISIBLE
+                lottieAnimation.visibility = if (detail == null) View.VISIBLE else View.GONE
+            }
         }
-    }
 
     private fun showPokemonDetail(detail: PokemonDetail) = with(binding) {
         typeAdapter.setPokemonType(detail.types)

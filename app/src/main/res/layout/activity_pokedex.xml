@@ -218,15 +218,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="8dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/iv_pokeball_throw"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/pokeball" />
-
+                        android:src="@drawable/pokeball"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tv_pokeball_throw"
@@ -242,21 +242,21 @@
                         android:visibility="gone" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:visibility="gone"
                         android:id="@+id/btn_pokeball_throw"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
                         android:fontFamily="@font/pokemon_font"
                         android:insetLeft="8dp"
                         android:insetTop="8dp"
                         android:insetRight="8dp"
-                        android:layout_gravity="bottom"
                         android:insetBottom="8dp"
                         android:padding="12dp"
                         android:text="@string/proceed"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="12sp"
+                        android:visibility="gone"
                         app:backgroundTint="@color/pokedex_grey"
                         app:cornerRadius="8dp"
                         app:strokeWidth="2dp" />
