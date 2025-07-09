@@ -15,6 +15,7 @@ A modern, native Android Pokédex app built with Kotlin, Views, Ktor and Koin. B
 - Lottie animations for loading and transitions
 - High-performance image loading with Glide
 - Dependency injection with Koin
+- **GAME MODE**: Ability to catch pokemon by throwing pokeball (Still in development)
 
 ## Optimizations & Architecture
 
