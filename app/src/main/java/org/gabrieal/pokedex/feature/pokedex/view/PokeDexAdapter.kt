@@ -1,9 +1,12 @@
 package org.gabrieal.pokedex.feature.pokedex.view
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.gabrieal.pokedex.R
@@ -20,6 +23,8 @@ class PokeDexAdapter(
     private var filteredList: List<NamedResource> = emptyList()
     private var caughtList: MutableSet<NamedResource> = mutableSetOf()
     private var selectedPokemon: NamedResource? = null
+
+    private var shakeAnimatorSet: AnimatorSet? = null
 
     fun setPokemonList(list: List<NamedResource>) {
         fullList = list
@@ -58,8 +63,18 @@ class PokeDexAdapter(
             root.setBackgroundColor(Color.TRANSPARENT)
             ivSelectedArrow.visibility = View.GONE
 
-            if(pokemon == selectedPokemon) {
-                root.setBackgroundColor(ContextCompat.getColor(root.context, R.color.pokedex_selected_blue))
+            ivPokemonCaught.rotation = 0f
+
+            if (pokemon == selectedPokemon) {
+                shakeAnimatorSet?.cancel()
+                startShaking(ivPokemonCaught)
+
+                root.setBackgroundColor(
+                    ContextCompat.getColor(
+                        root.context,
+                        R.color.pokedex_selected_blue
+                    )
+                )
                 ivSelectedArrow.visibility = View.VISIBLE
             }
 
@@ -84,6 +99,26 @@ class PokeDexAdapter(
         }
     }
 
+    private fun startShaking(ivPokemonCaught: ImageView) {
+        val rotation = ObjectAnimator.ofFloat(ivPokemonCaught, "rotation", -15f, 15f).apply {
+            duration = 500
+            repeatMode = ObjectAnimator.REVERSE
+            repeatCount = ObjectAnimator.INFINITE
+        }
+
+        val translationX =
+            ObjectAnimator.ofFloat(ivPokemonCaught, "translationX", -5f, 0f, 5f).apply {
+                duration = 500
+                repeatMode = ObjectAnimator.REVERSE
+                repeatCount = ObjectAnimator.INFINITE
+            }
+
+        shakeAnimatorSet = AnimatorSet().apply {
+            playTogether(rotation, translationX)
+            start()
+        }
+    }
+
     override fun getItemCount(): Int = filteredList.size
 
     private fun toggleCaughtStatus(pokemon: NamedResource, position: Int) {
@@ -91,7 +126,8 @@ class PokeDexAdapter(
         notifyItemChanged(position)
     }
 
-    inner class PokeDexViewHolder(val binding: PokedexItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class PokeDexViewHolder(val binding: PokedexItemBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     interface OnItemClickListener {
         fun onPokemonClick(name: String)

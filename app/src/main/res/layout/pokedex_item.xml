@@ -16,17 +16,10 @@
             android:src="@drawable/pixel_arrow_left"
             android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/iv_pokemon_caught"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="4dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pokeball_not" />
-
         <TextView
+            android:layout_weight="1"
             android:id="@+id/tv_pokemon_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/pokemon_font"
@@ -34,6 +27,15 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             tools:text="@string/placeholder" />
+
+        <ImageView
+            android:id="@+id/iv_pokemon_caught"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:layout_marginEnd="24dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pokeball_not" />
 
     </LinearLayout>
 
