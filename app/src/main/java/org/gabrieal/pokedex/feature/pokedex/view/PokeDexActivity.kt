@@ -200,12 +200,13 @@ class PokeDexActivity : BaseActivity() {
     }
 
     private fun handleThrow() = with(binding) {
-        if (ivPokeballThrow.y + ivPokeballThrow.translationY < flPokeballThrow.top) {
-            ivPokeballThrow.visibility = View.GONE
-            launchBallIntoTopScreen()
-        } else {
+        if (ivPokeballThrow.y + ivPokeballThrow.translationY >= flPokeballThrow.top) {
             ivPokeballThrow.animate().translationX(0f).translationY(0f).setDuration(300).start()
+            return
         }
+
+        ivPokeballThrow.visibility = View.GONE
+        launchBallIntoTopScreen()
     }
 
     private fun launchBallIntoTopScreen() = with(binding) {
@@ -253,7 +254,6 @@ class PokeDexActivity : BaseActivity() {
                 ivPokemonCatch.visibility = View.GONE
             }
             .withEndAction {
-
                 flPokemonCatch.removeView(impact)
                 flPokemonCatch.removeView(newBall)
                 ivPokemonCatch.visibility = View.VISIBLE
