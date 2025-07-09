@@ -23,6 +23,7 @@ import org.gabrieal.pokedex.data.model.PokemonDetail
 import org.gabrieal.pokedex.databinding.ActivityPokedexBinding
 import org.gabrieal.pokedex.feature.pokedex.viewmodel.PokeDexViewModel
 import org.gabrieal.pokedex.helpers.enums.Filter
+import org.gabrieal.pokedex.helpers.util.MusicPlayerUtil
 import org.gabrieal.pokedex.helpers.util.toSentenceCase
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -34,8 +35,8 @@ class PokeDexActivity : BaseActivity() {
     private var lastX = 0f
     private var lastY = 0f
 
-    private val clickSoundMP: MediaPlayer by lazy { MediaPlayer.create(this, R.raw.click_sound) }
-    private val successSoundMP: MediaPlayer by lazy { MediaPlayer.create(this, R.raw.pokeball_success) }
+    private val clickSoundMP: MediaPlayer by lazy { MusicPlayerUtil.create(this, R.raw.click_sound) }
+    private val successSoundMP: MediaPlayer by lazy { MusicPlayerUtil.create(this, R.raw.pokeball_success) }
     private var pokemonDetails: Pair<NamedResource, Int>? = null
 
     private val pokeDexAdapter = PokeDexAdapter(object : PokeDexAdapter.OnItemClickListener {
@@ -77,12 +78,12 @@ class PokeDexActivity : BaseActivity() {
 
         btnNormal.setOnClickListener {
             playSound(clickSoundMP)
-            loadPokemonSprite(viewModel.pokemonDetailState.value?.sprites?.frontDefault)
+            loadPokemonSprite(viewModel.uiState.value.pokemonDetail?.sprites?.frontDefault)
         }
 
         btnShiny.setOnClickListener {
             playSound(clickSoundMP)
-            loadPokemonSprite(viewModel.pokemonDetailState.value?.sprites?.frontShiny)
+            loadPokemonSprite(viewModel.uiState.value.pokemonDetail?.sprites?.frontShiny)
         }
 
         btnPokeballThrow.setOnClickListener {
@@ -107,22 +108,16 @@ class PokeDexActivity : BaseActivity() {
     override fun observeResponses() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.pokemonState.collect { it?.results?.let(pokeDexAdapter::setPokemonList) }
-                }
-
-                launch {
-                    viewModel.pokemonDetailState.collect { it?.let(::showPokemonDetail) }
-                }
-
-                launch {
-                    viewModel.isCatchMode.collect(::toggleCatchModeVisibility)
+                viewModel.uiState.collect { state ->
+                    state.pokemonList?.results?.let(pokeDexAdapter::setPokemonList)
+                    state.pokemonDetail?.let(::showPokemonDetail)
+                    toggleCatchModeVisibility(state.isCatchMode, state.pokemonDetail)
                 }
             }
         }
     }
 
-    private fun toggleCatchModeVisibility(isCatchMode: Boolean) = with(binding) {
+    private fun toggleCatchModeVisibility(isCatchMode: Boolean, detail: PokemonDetail?) = with(binding) {
         ivPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
         flPokemonCatch.visibility = if (isCatchMode) View.VISIBLE else View.GONE
         flPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
@@ -136,19 +131,18 @@ class PokeDexActivity : BaseActivity() {
         } else {
             tvPokeballThrow.visibility = View.GONE
             btnPokeballThrow.visibility = View.GONE
-            llPokedex.visibility = if (viewModel.pokemonDetailState.value == null) View.GONE else View.VISIBLE
-            llBottomButtons.visibility = if (viewModel.pokemonDetailState.value == null) View.GONE else View.VISIBLE
-            lottieAnimation.visibility = if (viewModel.pokemonDetailState.value == null) View.VISIBLE else View.GONE
+            llPokedex.visibility = if (detail == null) View.GONE else View.VISIBLE
+            llBottomButtons.visibility = if (detail == null) View.GONE else View.VISIBLE
+            lottieAnimation.visibility = if (detail == null) View.VISIBLE else View.GONE
         }
     }
 
     private fun showPokemonDetail(detail: PokemonDetail) = with(binding) {
-        toggleCatchModeVisibility(viewModel.isCatchMode.value)
         typeAdapter.setPokemonType(detail.types)
         tvPokedexName.text = detail.name?.toSentenceCase()
         tvPokedexDescription.text = detail.description
         tvPokedexAbilities.text =
-            detail.abilities?.joinToString("\n") { "• ${it.ability?.name?.toSentenceCase()}" }
+            detail.abilities?.joinToString("\n") { "\u2022 ${it.ability?.name?.toSentenceCase()}" }
 
         loadPokemonSprite(detail.sprites?.frontDefault)
     }
@@ -159,9 +153,7 @@ class PokeDexActivity : BaseActivity() {
     }
 
     private fun playSound(mediaPlayer: MediaPlayer) {
-        mediaPlayer.setVolume(0.05f, 0.05f)
-        mediaPlayer.seekTo(0)
-        mediaPlayer.start()
+        MusicPlayerUtil.play(mediaPlayer)
     }
 
     private fun handleTouch(event: MotionEvent): Boolean = with(binding) {

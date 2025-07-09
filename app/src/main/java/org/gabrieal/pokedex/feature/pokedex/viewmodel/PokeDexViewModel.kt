@@ -8,27 +8,24 @@ import kotlinx.coroutines.launch
 import org.gabrieal.pokedex.data.model.PokemonDetail
 import org.gabrieal.pokedex.data.model.PokemonList
 import org.gabrieal.pokedex.feature.pokedex.repo.PokeDexRepo
+import org.gabrieal.pokedex.feature.pokedex.viewmodel.PokeDexUiState
 
 class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
 
-    private val _pokemonState = MutableStateFlow<PokemonList?>(null)
-    val pokemonState: StateFlow<PokemonList?> = _pokemonState
-
-    private val _pokemonDetailState = MutableStateFlow<PokemonDetail?>(null)
-    val pokemonDetailState: StateFlow<PokemonDetail?> = _pokemonDetailState
-
-    private val _isCatchMode = MutableStateFlow<Boolean>(false)
-    val isCatchMode: StateFlow<Boolean> = _isCatchMode
+    private val _uiState = MutableStateFlow(PokeDexUiState())
+    val uiState: StateFlow<PokeDexUiState> = _uiState
 
     fun setCatchMode(catchMode: Boolean) {
-        _isCatchMode.value = catchMode
+        _uiState.value = _uiState.value.copy(isCatchMode = catchMode)
     }
 
     fun loadPokemonList() = viewModelScope.launch {
         runCatching {
-            repo.getPokemons().collect { _pokemonState.value = it }
+            repo.getPokemons().collect {
+                _uiState.value = _uiState.value.copy(pokemonList = it)
+            }
         }.onFailure {
-
+            // Optionally handle errors in UI state
         }
     }
 
@@ -38,7 +35,7 @@ class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
                 fetchAndAttachDescription(name, detail)
             }
         }.onFailure {
-
+            // Optionally handle errors in UI state
         }
     }
 
@@ -51,10 +48,10 @@ class PokeDexViewModel(private val repo: PokeDexRepo) : ViewModel() {
                         ?.flavorText.orEmpty()
 
                     detail.description = cleanDescription(rawText)
-                    _pokemonDetailState.value = detail
+                    _uiState.value = _uiState.value.copy(pokemonDetail = detail)
                 }
             }.onFailure {
-
+                // Optionally handle errors in UI state
             }
         }
 
