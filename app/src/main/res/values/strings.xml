@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Pokedex151</string>
+    <string name="app_name">Pokédex151</string>
     <string name="normal">Normal</string>
     <string name="shiny">Shiny</string>
     <string name="placeholder">Bulbasaur</string>
     <string name="abilities">Abilities:</string>
-    <string name="you_ve_caught_a_pokemon">You\'ve caught a POKEMON!</string>
+    <string name="you_ve_caught_a_pokemon">You\'ve caught a POKéMON!</string>
     <string name="proceed">Proceed</string>
 </resources>

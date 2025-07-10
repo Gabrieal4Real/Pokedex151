@@ -18,10 +18,9 @@ class PokeDexAdapter(
     private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PokeDexAdapter.PokeDexViewHolder>() {
 
-    private var pokemonList: List<NamedResource> = emptyList()
-    private var caughtList: Set<NamedResource> = emptySet()
+    private var pokemonList = emptyList<NamedResource>()
+    private var caughtList = emptySet<NamedResource>()
     private var selectedPokemon: NamedResource? = null
-    private var shakeAnimatorSet: AnimatorSet? = null
 
     fun setPokemonList(list: List<NamedResource>) {
         pokemonList = list
@@ -30,42 +29,34 @@ class PokeDexAdapter(
 
     fun setCaughtList(list: Set<NamedResource>) {
         caughtList = list
-        notifyDataSetChanged()
+        caughtList.forEach { notifyItemChanged(pokemonList.indexOf(it)) }
     }
 
     fun setSelected(pokemon: NamedResource) {
-        val previous = pokemonList.indexOf(selectedPokemon)
-        val current = pokemonList.indexOf(pokemon)
+        val prev = pokemonList.indexOf(selectedPokemon)
+        val curr = pokemonList.indexOf(pokemon)
         selectedPokemon = pokemon
-        notifyItemChanged(previous)
-        notifyItemChanged(current)
+        if (prev != -1) notifyItemChanged(prev)
+        if (curr != -1) notifyItemChanged(curr)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokeDexViewHolder {
-        val binding = PokedexItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PokeDexViewHolder(binding)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        PokeDexViewHolder(
+            PokedexItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
 
     override fun onBindViewHolder(holder: PokeDexViewHolder, position: Int) {
         val pokemon = pokemonList[position]
+        val binding = holder.binding
 
-        with(holder.binding) {
+        with(binding) {
             tvPokemonName.text = pokemon.name?.toSentenceCase()
 
-            root.setBackgroundColor(Color.TRANSPARENT)
-            ivSelectedArrow.visibility = View.GONE
-            ivPokemonCaught.rotation = 0f
+            resetView(ivPokemonCaught, binding)
 
             if (pokemon == selectedPokemon) {
-                shakeAnimatorSet?.cancel()
-                if (pokemon !in caughtList) startShaking(ivPokemonCaught)
-
-                root.setBackgroundColor(
-                    ContextCompat.getColor(
-                        root.context,
-                        R.color.pokedex_selected_blue
-                    )
-                )
+                startShaking(ivPokemonCaught)
+                root.setBackgroundColor(ContextCompat.getColor(root.context, R.color.pokedex_selected_blue))
                 ivSelectedArrow.visibility = View.VISIBLE
             }
 
@@ -76,48 +67,60 @@ class PokeDexAdapter(
             ivPokemonCaught.setOnClickListener {
                 if (pokemon != selectedPokemon) {
                     root.performClick()
-                    return@setOnClickListener
+                } else {
+                    onItemClickListener.catchingPokemon(pokemon)
                 }
-                onItemClickListener.catchingPokemon(pokemon)
             }
 
             root.setOnClickListener {
-                if (pokemon == selectedPokemon) return@setOnClickListener
-                setSelected(pokemon)
-                pokemon.name?.let { name -> onItemClickListener.onPokemonClick(name) }
+                if (pokemon != selectedPokemon) {
+                    setSelected(pokemon)
+                    pokemon.name?.let(onItemClickListener::onPokemonClick)
+                }
             }
 
             root.setOnLongClickListener {
                 onItemClickListener.catchingPokemon(pokemon)
-                return@setOnLongClickListener true
+                true
             }
         }
     }
 
-    override fun getItemCount(): Int = pokemonList.size
+    override fun getItemCount() = pokemonList.size
 
-    private fun startShaking(ivPokemonCaught: ImageView) {
-        val rotation = ObjectAnimator.ofFloat(ivPokemonCaught, "rotation", -15f, 15f).apply {
+    private fun resetView(iv: ImageView, binding: PokedexItemBinding) {
+        binding.root.setBackgroundColor(Color.TRANSPARENT)
+        binding.ivSelectedArrow.visibility = View.GONE
+
+        (iv.getTag(R.id.iv_pokemon_caught_tag) as? AnimatorSet)?.cancel()
+        iv.setTag(R.id.iv_pokemon_caught_tag, null)
+        iv.rotation = 0f
+        iv.translationX = 0f
+    }
+
+    private fun startShaking(view: ImageView) {
+        (view.getTag(R.id.iv_pokemon_caught_tag) as? AnimatorSet)?.cancel()
+
+        val rotation = ObjectAnimator.ofFloat(view, "rotation", -15f, 15f).apply {
             duration = 500
             repeatMode = ObjectAnimator.REVERSE
             repeatCount = ObjectAnimator.INFINITE
         }
 
-        val translationX =
-            ObjectAnimator.ofFloat(ivPokemonCaught, "translationX", -5f, 0f, 5f).apply {
-                duration = 500
-                repeatMode = ObjectAnimator.REVERSE
-                repeatCount = ObjectAnimator.INFINITE
-            }
+        val translation = ObjectAnimator.ofFloat(view, "translationX", -5f, 0f, 5f).apply {
+            duration = 500
+            repeatMode = ObjectAnimator.REVERSE
+            repeatCount = ObjectAnimator.INFINITE
+        }
 
-        shakeAnimatorSet = AnimatorSet().apply {
-            playTogether(rotation, translationX)
+        AnimatorSet().apply {
+            playTogether(rotation, translation)
             start()
+            view.setTag(R.id.iv_pokemon_caught_tag, this)
         }
     }
 
-    inner class PokeDexViewHolder(val binding: PokedexItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class PokeDexViewHolder(val binding: PokedexItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     interface OnItemClickListener {
         fun onPokemonClick(name: String)
