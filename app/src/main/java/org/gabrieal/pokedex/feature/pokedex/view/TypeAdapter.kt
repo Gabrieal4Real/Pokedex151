@@ -19,7 +19,8 @@ class TypeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypeViewHolder {
-        val binding = PokemonTypeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            PokemonTypeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TypeViewHolder(binding)
     }
 

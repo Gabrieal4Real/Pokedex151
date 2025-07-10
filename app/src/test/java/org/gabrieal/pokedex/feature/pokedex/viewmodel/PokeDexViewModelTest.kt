@@ -43,7 +43,7 @@ class PokeDexViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertEquals(fakeList, viewModel.pokemonState.value)
+        assertEquals(fakeList, viewModel.uiState.value.pokemonList)
     }
 
     @Test
@@ -68,7 +68,7 @@ class PokeDexViewModelTest {
         advanceUntilIdle()
 
         // Then
-        val result = viewModel.pokemonDetailState.value
+        val result = viewModel.uiState.value.pokemonDetail
         assertNotNull(result)
         assertEquals("Seed Pokémon. Very cool.", result?.description)
     }
@@ -88,7 +88,7 @@ class PokeDexViewModelTest {
         advanceUntilIdle()
 
         // Then
-        val result = viewModel.pokemonDetailState.value
+        val result = viewModel.uiState.value.pokemonDetail
         assertNotNull(result)
         assertEquals("", result?.description)
     }
