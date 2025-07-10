@@ -15,10 +15,23 @@
             android:background="@color/black" />
 
         <LinearLayout
-            android:id="@+id/ll_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_app_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_button_mirror"
+                android:fontFamily="@font/pokemon_font"
+                android:padding="12dp"
+                android:text="@string/gabrieal_s_pokedex151"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

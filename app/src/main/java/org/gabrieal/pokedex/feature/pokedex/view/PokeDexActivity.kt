@@ -104,8 +104,8 @@ class PokeDexActivity : BaseActivity() {
         flPokeballThrow.setOnTouchListener { _, event -> handleTouch(event) }
 
         getSystemBarHeights(root) { statusBar, navBar ->
-            llRoot.setPadding(0, statusBar, 0, 0)
-            llPhysicalButtons.setPadding(32, 48, 32, 32 + navBar)
+            tvAppName.setPadding(12.dp, 12.dp + statusBar, 12.dp, 12.dp)
+            llPhysicalButtons.setPadding(12.dp, 12.dp, 12.dp, 12.dp + navBar)
         }
     }
 
