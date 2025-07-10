@@ -24,6 +24,8 @@ import org.gabrieal.pokedex.databinding.ActivityPokedexBinding
 import org.gabrieal.pokedex.feature.pokedex.viewmodel.PokeDexViewModel
 import org.gabrieal.pokedex.helpers.enums.Filter
 import org.gabrieal.pokedex.helpers.util.MusicPlayerUtil
+import org.gabrieal.pokedex.helpers.util.collectFieldIn
+import org.gabrieal.pokedex.helpers.util.dp
 import org.gabrieal.pokedex.helpers.util.toSentenceCase
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -90,6 +92,10 @@ class PokeDexActivity : BaseActivity() {
         }
 
         btnPokeballThrow.setOnClickListener {
+            ivPokeballThrow.visibility = View.VISIBLE
+            tvPokeballThrow.visibility = View.GONE
+            btnPokeballThrow.visibility = View.GONE
+
             viewModel.uiState.value.catchingPokemon?.let { pokemon ->
                 viewModel.toggleCaughtStatus(pokemon)
             }
@@ -112,11 +118,22 @@ class PokeDexActivity : BaseActivity() {
     override fun observeResponses() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    state.pokemonDetail?.let(::showPokemonDetail)
-                    state.filteredList.let(pokeDexAdapter::setPokemonList)
-                    state.caughtList.let(pokeDexAdapter::setCaughtList)
-                    toggleCatchModeVisibility(state.isCatchMode, state.pokemonDetail)
+                with(viewModel.uiState) {
+                    collectFieldIn(this@repeatOnLifecycle, { it.pokemonDetail }) {
+                        it?.let(::showPokemonDetail)
+                    }
+
+                    collectFieldIn(this@repeatOnLifecycle, { it.filteredList }) {
+                        pokeDexAdapter.setPokemonList(it)
+                    }
+
+                    collectFieldIn(this@repeatOnLifecycle, { it.caughtList }) {
+                        pokeDexAdapter.setCaughtList(it)
+                    }
+
+                    collectFieldIn(this@repeatOnLifecycle, { it.isCatchMode to it.pokemonDetail }) {
+                        toggleCatchModeVisibility(it.first, it.second)
+                    }
                 }
             }
         }
@@ -124,24 +141,31 @@ class PokeDexActivity : BaseActivity() {
 
     private fun toggleCatchModeVisibility(isCatchMode: Boolean, detail: PokemonDetail?) =
         with(binding) {
-            ivPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
-            flPokemonCatch.visibility = if (isCatchMode) View.VISIBLE else View.GONE
-            flPokeballThrow.visibility = if (isCatchMode) View.VISIBLE else View.GONE
-            rvPokedex.visibility = if (!isCatchMode) View.VISIBLE else View.GONE
-
             if (isCatchMode) {
+                rlTopScreen.visibility = View.GONE
+                rlBottomScreen.visibility = View.GONE
+                flPokemonCatch.visibility = View.VISIBLE
+                flPokeballThrow.visibility = View.VISIBLE
+
                 Toast.makeText(this@PokeDexActivity, "GET READY TO CATCH!", Toast.LENGTH_SHORT)
                     .show()
-                lottieAnimation.visibility = View.GONE
-                llPokedex.visibility = View.GONE
-                llBottomButtons.visibility = View.GONE
-            } else {
-                tvPokeballThrow.visibility = View.GONE
-                btnPokeballThrow.visibility = View.GONE
-                llPokedex.visibility = if (detail == null) View.GONE else View.VISIBLE
-                llBottomButtons.visibility = if (detail == null) View.GONE else View.VISIBLE
-                lottieAnimation.visibility = if (detail == null) View.VISIBLE else View.GONE
+                return
             }
+            llPokedex.visibility = View.GONE
+            llBottomButtons.visibility = View.GONE
+            lottieAnimation.visibility = View.VISIBLE
+
+            detail?.let {
+                llPokedex.visibility = View.VISIBLE
+                llBottomButtons.visibility = View.VISIBLE
+                lottieAnimation.visibility = View.GONE
+            }
+
+            flPokemonCatch.visibility = View.GONE
+            flPokeballThrow.visibility = View.GONE
+
+            rlTopScreen.visibility = View.VISIBLE
+            rlBottomScreen.visibility = View.VISIBLE
         }
 
     private fun showPokemonDetail(detail: PokemonDetail) = with(binding) {
@@ -154,9 +178,9 @@ class PokeDexActivity : BaseActivity() {
         loadPokemonSprite(detail.sprites?.frontDefault)
     }
 
-    private fun loadPokemonSprite(url: String?) {
-        Glide.with(this).load(url).into(binding.ivPokedex)
-        Glide.with(this).load(url).into(binding.ivPokemonCatch)
+    private fun loadPokemonSprite(url: String?) = with(binding) {
+        Glide.with(this@PokeDexActivity).load(url).into(ivPokedex)
+        Glide.with(this@PokeDexActivity).load(url).into(ivPokemonCatch)
     }
 
     private fun playSound(mediaPlayer: MediaPlayer) {
@@ -262,9 +286,6 @@ class PokeDexActivity : BaseActivity() {
             }
             .start()
     }
-
-    private val Int.dp: Int
-        get() = (this * resources.displayMetrics.density).toInt()
 
     override fun onDestroy() {
         super.onDestroy()
