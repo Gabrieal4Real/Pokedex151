@@ -4,8 +4,7 @@ A modern, native Android Pokédex app built with Kotlin, Views, Ktor and Koin. B
 
 ## Screenshot
 
-<img width="755" alt="Screenshot 2025-07-06 at 11 59 39 PM" src="https://github.com/user-attachments/assets/0cb54ad2-406c-4ba2-ad15-badbafc06889" />
-
+<img width="1256" alt="Screenshot 2025-07-10 at 3 18 11 PM" src="https://github.com/user-attachments/assets/1989f2a2-507a-44fe-a8f3-dc241ba41ea4" />
 
 ## Features
 
