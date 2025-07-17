@@ -15,10 +15,23 @@
             android:background="@color/black" />
 
         <LinearLayout
-            android:id="@+id/ll_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_app_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_button_mirror"
+                android:fontFamily="@font/pokemon_font"
+                android:padding="12dp"
+                android:text="@string/gabrieal_s_pokedex151"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -29,97 +42,120 @@
                 android:background="@drawable/bg_pokedex_screen"
                 android:padding="20dp">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_animation"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:padding="48dp"
-                    android:visibility="gone"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/loading_blue" />
-
                 <RelativeLayout
-                    android:id="@+id/ll_pokedex"
+                    android:id="@+id/rl_top_screen"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/iv_pokedex"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/tv_pokedex_name"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:scaleType="fitCenter" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_pokedex_types"
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottie_animation"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_above="@+id/tv_pokedex_title_abilities"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@+id/iv_pokedex"
-                        tools:itemCount="2"
-                        tools:listitem="@layout/pokemon_type_item" />
+                        android:layout_centerInParent="true"
+                        android:padding="48dp"
+                        android:visibility="gone"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/loading_blue" />
 
-                    <TextView
-                        android:id="@+id/tv_pokedex_title_abilities"
+                    <RelativeLayout
+                        android:id="@+id/ll_pokedex"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/tv_pokedex_abilities"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@+id/iv_pokedex"
-                        android:fontFamily="@font/pokemon_font"
-                        android:text="@string/abilities"
-                        android:textColor="@color/black"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_pokedex_abilities"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/tv_pokedex_name"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@+id/iv_pokedex"
-                        android:fontFamily="@font/pokemon_font"
-                        android:textColor="@color/black"
-                        android:textSize="8sp"
-                        tools:text="@string/placeholder" />
+                        <ImageView
+                            android:id="@+id/iv_pokedex"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/tv_pokedex_name"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:scaleType="fitCenter" />
 
-                    <TextView
-                        android:id="@+id/tv_pokedex_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/tv_pokedex_description"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="@font/pokemon_font"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="@string/placeholder" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_pokedex_types"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_above="@+id/tv_pokedex_title_abilities"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="8dp"
+                            android:layout_toEndOf="@+id/iv_pokedex"
+                            tools:itemCount="2"
+                            tools:listitem="@layout/pokemon_type_item" />
 
-                    <TextView
-                        android:id="@+id/tv_pokedex_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="@font/pokemon_font"
-                        android:lineSpacingMultiplier="1.2"
-                        android:lines="6"
-                        android:textColor="@color/black"
-                        android:textSize="11sp"
-                        tools:text="@string/placeholder" />
+                        <TextView
+                            android:id="@+id/tv_pokedex_title_abilities"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/tv_pokedex_abilities"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="8dp"
+                            android:layout_toEndOf="@+id/iv_pokedex"
+                            android:fontFamily="@font/pokemon_font"
+                            android:text="@string/abilities"
+                            android:textColor="@color/black"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_pokedex_abilities"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/tv_pokedex_name"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="8dp"
+                            android:layout_toEndOf="@+id/iv_pokedex"
+                            android:fontFamily="@font/pokemon_font"
+                            android:textColor="@color/black"
+                            android:textSize="8sp"
+                            tools:text="@string/placeholder" />
+
+                        <TextView
+                            android:id="@+id/tv_pokedex_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/tv_pokedex_description"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/pokemon_font"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="@string/placeholder" />
+
+                        <TextView
+                            android:id="@+id/tv_pokedex_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/pokemon_font"
+                            android:lineSpacingMultiplier="1.2"
+                            android:lines="6"
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            tools:text="@string/placeholder" />
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
+
+                <FrameLayout
+                    android:id="@+id/fl_pokemon_catch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_pokemon_catch"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter" />
+
+                </FrameLayout>
             </RelativeLayout>
 
             <View
@@ -138,64 +174,120 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_pokedex"
+                <RelativeLayout
+                    android:id="@+id/rl_bottom_screen"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_pokedex"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@+id/ll_bottom_buttons"
+                        android:layout_centerInParent="true"
+                        android:fadeScrollbars="false"
+                        android:padding="8dp"
+                        android:scrollbarSize="16dp"
+                        android:scrollbars="vertical"
+                        tools:listitem="@layout/pokedex_item" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_bottom_buttons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_normal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="2dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/pokemon_font"
+                            android:insetLeft="8dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="8dp"
+                            android:padding="12dp"
+                            android:text="@string/normal"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/pokedex_grey"
+                            app:cornerRadius="8dp"
+                            app:strokeWidth="2dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_shiny"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/pokemon_font"
+                            android:insetTop="0dp"
+                            android:insetRight="8dp"
+                            android:insetBottom="8dp"
+                            android:padding="12dp"
+                            android:text="@string/shiny"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/pokedex_grey"
+                            app:cornerRadius="8dp"
+                            app:strokeWidth="2dp" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <FrameLayout
+                    android:id="@+id/fl_pokeball_throw"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@+id/ll_bottom_buttons"
-                    android:layout_centerInParent="true"
-                    android:fadeScrollbars="false"
                     android:padding="8dp"
-                    android:scrollbarSize="16dp"
-                    android:scrollbars="vertical"
-                    tools:listitem="@layout/pokedex_item" />
-
-                <LinearLayout
-                    android:id="@+id/ll_bottom_buttons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:orientation="horizontal"
                     android:visibility="gone">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_normal"
-                        android:layout_width="0dp"
+                    <ImageView
+                        android:id="@+id/iv_pokeball_throw"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/pokeball" />
+
+                    <TextView
+                        android:id="@+id/tv_pokeball_throw"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="1"
+                        android:layout_gravity="center"
                         android:fontFamily="@font/pokemon_font"
-                        android:insetLeft="8dp"
-                        android:insetTop="0dp"
-                        android:insetBottom="8dp"
-                        android:padding="12dp"
-                        android:text="@string/normal"
-                        android:textAllCaps="true"
+                        android:lineSpacingExtra="12sp"
+                        android:text="@string/you_ve_caught_a_pokemon"
+                        android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/pokedex_grey"
-                        app:cornerRadius="8dp"
-                        app:strokeWidth="2dp" />
+                        android:textSize="32sp"
+                        android:visibility="gone" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_shiny"
-                        android:layout_width="0dp"
+                        android:id="@+id/btn_pokeball_throw"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
-                        android:layout_weight="1"
+                        android:layout_gravity="bottom"
                         android:fontFamily="@font/pokemon_font"
-                        android:insetTop="0dp"
+                        android:insetLeft="8dp"
+                        android:insetTop="8dp"
                         android:insetRight="8dp"
                         android:insetBottom="8dp"
                         android:padding="12dp"
-                        android:text="@string/shiny"
+                        android:text="@string/proceed"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="12sp"
+                        android:visibility="gone"
                         app:backgroundTint="@color/pokedex_grey"
                         app:cornerRadius="8dp"
                         app:strokeWidth="2dp" />
-                </LinearLayout>
+
+                </FrameLayout>
             </RelativeLayout>
 
 
